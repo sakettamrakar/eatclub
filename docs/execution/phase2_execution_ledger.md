@@ -78,3 +78,18 @@ Trust Upgrades (T1 → T2 → T3) are **earned** solely through the evidence in 
 - **Deviations**: None
 - **Validation**: Concurrency simulation tests
 - **Net Trust Impact**: Neutral
+
+### Entry 3
+- **Task ID**: P2-T3
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7.1 Email connector
+- **Trust Level Exercised**: T1
+- **Automation Type**: Passive Read
+- **Confirmation Points**: Connection Auth (Mocked)
+- **Mutation Summary**: None (Read Only Signal Extraction)
+- **User Response**: Accepted
+- **Rollback Capability**: Yes (Revoke Token)
+- **Constraints**: IDS-3 (Drafts requiring confirmation), MTRI T1
+- **Deviations**: None
+- **Validation**: Mock connector tests
+- **Net Trust Impact**: Increase - Connectivity
