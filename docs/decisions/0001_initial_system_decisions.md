@@ -1,7 +1,7 @@
 # 0001: Initial System Architecture and Philosophy
 
 ## Context
-The Digital Wired Butler System (DWBS) is being architected to serve as the definitive source of truth for household inventory and food state. In the current landscape of software development, there is a prevailing trend to integrate Large Language Models (LLMs) and stochastic AI agents as core decision-makers within applications to maximize automation and convenience. However, for a system intended to manage tangible assets and provide reliable state information, the non-deterministic nature of generative AI poses significant risks to data integrity and user trust. A fundamental choice must be made regarding the relationship between deterministic logic, human authority, and artificial intelligence within the system's core architecture.
+The Deterministic Work Breakdown System (DWBS) is being architected to serve as the definitive source of truth for household inventory and food state. In the current landscape of software development, there is a prevailing trend to integrate Large Language Models (LLMs) and stochastic AI agents as core decision-makers within applications to maximize automation and convenience. However, for a system intended to manage tangible assets and provide reliable state information, the non-deterministic nature of generative AI poses significant risks to data integrity and user trust. A fundamental choice must be made regarding the relationship between deterministic logic, human authority, and artificial intelligence within the system's core architecture.
 
 ## Decision
 We have decided to architect the system with a "Truth First" philosophy, enforcing strict subordination of AI components to deterministic logic and human authority.
@@ -16,7 +16,7 @@ We have decided to architect the system with a "Truth First" philosophy, enforci
 *   **Hybrid Trust Model**: We rejected any "middle ground" where high-confidence AI predictions are treated as truth. A binary distinction is maintained: data is either verified (Human/Deterministic System) or unverified (AI Proposal).
 
 ## Consequences (Accepted)
-*   **Increased User Friction**: Users must explicitly approve or input data. The "magic" experience of a fully autonomous butler is deliberately sacrificed for reliability.
+*   **Increased User Friction**: Users must explicitly approve or input data. The "magic" experience of a fully autonomous system is deliberately sacrificed for reliability.
 *   **Development Complexity**: A rigid boundary (e.g., the Invariants & Disqualifiers System) must be maintained between the "Brain" (AI) and the "Body" (System). This requires additional architectural layers for staging and proposal verification.
 *   **Slower Feature Velocity**: Features relying on probabilistic logic cannot be integrated into the core kernel; they must be built as peripheral modules, limiting the speed at which "smart" features can be deployed.
 *   **Strict Determinism**: The system is bound by the limitations of traditional software engineering; it cannot handle ambiguity in the core data model.
