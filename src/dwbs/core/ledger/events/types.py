@@ -4,13 +4,12 @@ from typing import Optional, Union, Literal
 from pydantic import Field, ConfigDict
 
 from ...contracts import SystemContract, MutationType, MutationSource, Explanation
-from ...identity.resolution import ItemIdentity
-from ...units.converter import Quantity
+from ...contracts.inventory import ItemIdentity, Quantity
 from ..waste.reasons import WasteReason
 
 class BasePayload(SystemContract):
     """Base class for event payloads."""
-    pass
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 class PurchasePayload(BasePayload):
     item: ItemIdentity
@@ -34,10 +33,7 @@ class WastePayload(BasePayload):
 
 class CorrectionPayload(BasePayload):
     item: ItemIdentity
-    quantity_delta: Quantity # Can be negative? Quantity usually absolute.
-    # If Quantity is absolute, we need to know if we are adding or removing.
-    # But MutationType tells us CORRECTION_ADD vs CORRECTION_REMOVE.
-    # So quantity is absolute.
+    quantity_delta: Quantity
     source: MutationSource
     explanation: Explanation
 

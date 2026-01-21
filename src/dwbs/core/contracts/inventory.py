@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Optional, List
 from datetime import date
+from decimal import Decimal
 from pydantic import Field, field_validator, ConfigDict
 
 from .base import SystemContract
@@ -41,9 +42,11 @@ class Quantity(SystemContract):
     """
     D1.3 Quantity & Unit Normalization
     Represents a physical quantity with a unit.
+    Uses Decimal for precision.
     """
-    value: float = Field(..., ge=0, description="The numerical amount. Must be non-negative.")
+    value: Decimal = Field(..., description="The numerical amount. Must be non-negative.")
     unit: Unit = Field(..., description="The unit of measurement.")
+    approx: bool = Field(False, description="Whether this quantity is an approximation.")
 
     @field_validator('value')
     def value_must_be_non_negative(cls, v):
@@ -56,9 +59,9 @@ class Quantity(SystemContract):
         Returns a normalized version of the quantity (e.g., KG -> G, L -> ML).
         """
         if self.unit == Unit.KILOGRAM:
-            return Quantity(value=self.value * 1000, unit=Unit.GRAM)
+            return Quantity(value=self.value * 1000, unit=Unit.GRAM, approx=self.approx)
         elif self.unit == Unit.LITER:
-            return Quantity(value=self.value * 1000, unit=Unit.MILLILITER)
+            return Quantity(value=self.value * 1000, unit=Unit.MILLILITER, approx=self.approx)
         return self
 
     def __add__(self, other: 'Quantity') -> 'Quantity':
@@ -66,18 +69,34 @@ class Quantity(SystemContract):
             norm_self = self.normalize()
             norm_other = other.normalize()
             if norm_self.unit == norm_other.unit:
-                return Quantity(value=norm_self.value + norm_other.value, unit=norm_self.unit)
+                return Quantity(
+                    value=norm_self.value + norm_other.value,
+                    unit=norm_self.unit,
+                    approx=self.approx or other.approx
+                )
             raise ValueError(f"Cannot add different units: {self.unit} and {other.unit}")
-        return Quantity(value=self.value + other.value, unit=self.unit)
+        return Quantity(
+            value=self.value + other.value,
+            unit=self.unit,
+            approx=self.approx or other.approx
+        )
 
     def __sub__(self, other: 'Quantity') -> 'Quantity':
         if self.unit != other.unit:
             norm_self = self.normalize()
             norm_other = other.normalize()
             if norm_self.unit == norm_other.unit:
-                return Quantity(value=norm_self.value - norm_other.value, unit=norm_self.unit)
+                return Quantity(
+                    value=norm_self.value - norm_other.value,
+                    unit=norm_self.unit,
+                    approx=self.approx or other.approx
+                )
             raise ValueError(f"Cannot subtract different units: {self.unit} and {other.unit}")
-        return Quantity(value=self.value - other.value, unit=self.unit)
+        return Quantity(
+            value=self.value - other.value,
+            unit=self.unit,
+            approx=self.approx or other.approx
+        )
 
     def __lt__(self, other: 'Quantity') -> bool:
         norm_self = self.normalize()
@@ -110,6 +129,18 @@ class ItemIdentity(SystemContract):
         if self.brand:
             parts.append(f"[{self.brand}]")
         return " ".join(parts)
+
+    def __eq__(self, other):
+        if not isinstance(other, ItemIdentity):
+            return False
+        return (
+            self.name == other.name and
+            self.variant == other.variant and
+            self.brand == other.brand
+        )
+
+    def __hash__(self):
+        return hash((self.name, self.variant, self.brand))
 
 class InventoryItem(SystemContract):
     """
