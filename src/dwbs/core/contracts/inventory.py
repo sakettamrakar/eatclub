@@ -169,6 +169,7 @@ class InventoryState(SystemContract):
     Represents the full state of the inventory at a point in time.
     """
     items: List[InventoryItem] = Field(default_factory=list)
+    version: int = Field(0, description="Optimistic locking version counter.")
 
     def get_stock_snapshot(self) -> List[InventoryItem]:
         return [item for item in self.items if item.is_in_stock()]

@@ -46,6 +46,7 @@ class LedgerEvent(SystemContract):
     timestamp: datetime = Field(default_factory=datetime.now, description="When the event occurred")
     actor: str = Field(..., description="The entity performing the action")
     mutation_type: MutationType = Field(..., description="Type of operation")
+    expected_version: Optional[int] = Field(None, description="Optimistic locking: required version for this event to be valid.")
 
 class PurchaseEvent(LedgerEvent):
     mutation_type: Literal[MutationType.PURCHASE] = MutationType.PURCHASE

@@ -25,3 +25,7 @@ class ContractViolationError(DWBSException):
 class UncertaintyError(DWBSException):
     """Raised when the system is too uncertain to proceed (Truth Before Utility)."""
     pass
+
+class ConcurrencyError(DWBSException):
+    """Raised when an optimistic locking check fails."""
+    pass

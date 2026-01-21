@@ -63,3 +63,18 @@ Trust Upgrades (T1 → T2 → T3) are **earned** solely through the evidence in 
 - **Deviations**: Task Graph lists Deliverable as 'D10.1 Roles (Foundational)' despite task being Feature Flags. Implemented Feature Flags as per Task Definition.
 - **Validation**: Unit tests for toggle logic
 - **Net Trust Impact**: Neutral
+
+### Entry 2
+- **Task ID**: P2-T2
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10.2 Conflict Resolution (Foundational)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Concurrency Logic
+- **Confirmation Points**: None
+- **Mutation Summary**: Schema Update (Added version to InventoryState, expected_version to LedgerEvent)
+- **User Response**: N/A
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-10 (Historical integrity)
+- **Deviations**: None
+- **Validation**: Concurrency simulation tests
+- **Net Trust Impact**: Neutral
