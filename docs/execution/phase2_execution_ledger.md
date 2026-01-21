@@ -49,3 +49,17 @@ Trust Upgrades (T1 → T2 → T3) are **earned** solely through the evidence in 
 
 ---
 
+### Entry 1
+- **Task ID**: P2-T1
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10.1 Roles (Foundational)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Configuration
+- **Confirmation Points**: None
+- **Mutation Summary**: Feature Flags Created (Passive Ingest, Smart Depletion, Voice, Family)
+- **User Response**: N/A
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-1 (Append-only context)
+- **Deviations**: Task Graph lists Deliverable as 'D10.1 Roles (Foundational)' despite task being Feature Flags. Implemented Feature Flags as per Task Definition.
+- **Validation**: Unit tests for toggle logic
+- **Net Trust Impact**: Neutral
