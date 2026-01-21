@@ -3,9 +3,10 @@ from typing import List, Optional, Dict
 from uuid import UUID, uuid4
 from pydantic import Field
 
-from .contracts import (
-    SystemContract, MutationType, MutationSource, Explanation, StockStatus
-)
+from .contracts.base import SystemContract
+from .contracts.inventory import InventoryItem, StockStatus
+from .contracts.mutation import MutationType, MutationSource
+from .contracts.explanation import Explanation
 from .domain import ItemIdentity, Quantity, Unit
 from .exceptions import InvalidInventoryStateError, MutationError
 
@@ -27,15 +28,6 @@ class InventoryEvent(SystemContract):
     expiry_date: Optional[date] = Field(None, description="Expiry date of the batch (relevant for PURCHASE)")
 
     explanation: Explanation = Field(..., description="Why this event happened")
-
-class InventoryItem(SystemContract):
-    """
-    Represents the current state of an item in the inventory.
-    """
-    item: ItemIdentity
-    quantity: Quantity
-    expiry_date: Optional[date] = None
-    status: StockStatus = StockStatus.IN_STOCK
 
 class InventoryLedger:
     """
