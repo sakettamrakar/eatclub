@@ -93,3 +93,153 @@ Trust Upgrades (T1 → T2 → T3) are **earned** solely through the evidence in 
 - **Deviations**: None
 - **Validation**: Mock connector tests
 - **Net Trust Impact**: Increase - Connectivity
+
+### Entry 4
+- **Task ID**: P2-T4
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7.2 Invoice classification
+- **Trust Level Exercised**: T0
+- **Automation Type**: Rule-based Classification
+- **Confirmation Points**: None
+- **Mutation Summary**: None
+- **User Response**: N/A
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-5 (No ML)
+- **Deviations**: None
+- **Validation**: Keyword test suite
+- **Net Trust Impact**: Neutral
+
+### Entry 5
+- **Task ID**: P2-T5
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7.3 PDF parser
+- **Trust Level Exercised**: T1
+- **Automation Type**: Parsing
+- **Confirmation Points**: None
+- **Mutation Summary**: Draft Objects Created (Ephemeral)
+- **User Response**: N/A
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-8 (No free text reliance), T1
+- **Deviations**: None
+- **Validation**: Parser unit tests
+- **Net Trust Impact**: Neutral
+
+### Entry 6
+- **Task ID**: P2-T6
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7.4 Confidence scoring
+- **Trust Level Exercised**: T0
+- **Automation Type**: Heuristic Scoring
+- **Confirmation Points**: None
+- **Mutation Summary**: Score Assignment
+- **User Response**: N/A
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-1 (Truth before utility), T0
+- **Deviations**: None
+- **Validation**: Scoring logic tests
+- **Net Trust Impact**: Neutral
+
+### Entry 7
+- **Task ID**: P2-T7
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7.5 User approval UI
+- **Trust Level Exercised**: T2
+- **Automation Type**: Assistive Import
+- **Confirmation Points**: Final "Commit" Tap
+- **Mutation Summary**: Ledger Append
+- **User Response**: Explicit Acceptance
+- **Rollback Capability**: Yes (Correction Event)
+- **Constraints**: IDS-3 (Explicit confirmation), T2
+- **Deviations**: Validation 'UI Walkthrough' replaced by 'Code Inspection' due to AI environment limitations.
+- **Validation**: Code Inspection
+- **Net Trust Impact**: Increase - If Successful
+
+### Entry 8
+- **Task ID**: P2-T8
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7 Email & PDF Ingestion
+- **Trust Level Exercised**: T1
+- **Automation Type**: Validation Suite
+- **Confirmation Points**: Test Result Review
+- **Mutation Summary**: None (Mock)
+- **User Response**: Pass
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-11 (No inference without action), T1
+- **Deviations**: None
+- **Validation**: Integration test
+- **Net Trust Impact**: Neutral
+
+### Entry 9
+- **Task ID**: P2-T9
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D8.1 Recipe-linked depletion
+- **Trust Level Exercised**: T1
+- **Automation Type**: Calculation
+- **Confirmation Points**: None
+- **Mutation Summary**: Draft Event Created
+- **User Response**: N/A
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-7 (Computable from state), T1
+- **Deviations**: None
+- **Validation**: Logic unit tests
+- **Net Trust Impact**: Neutral
+
+### Entry 10
+- **Task ID**: P2-T10
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D8.2 Partial consumption logic
+- **Trust Level Exercised**: T2
+- **Automation Type**: Assistive Adjustment
+- **Confirmation Points**: Value Selection
+- **Mutation Summary**: Event Payload Mod
+- **User Response**: Explicit Set
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-1 (Append-only, explicit), T2
+- **Deviations**: None
+- **Validation**: UI Logic test
+- **Net Trust Impact**: Increase - Control
+
+### Entry 11
+- **Task ID**: P2-T11
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D8.3 Missed-meal reconciliation
+- **Trust Level Exercised**: T1
+- **Automation Type**: Suggestion
+- **Confirmation Points**: Yes/No Response
+- **Mutation Summary**: None unless confirmed
+- **User Response**: Response Recorded
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-11 (No inference state change), T1
+- **Deviations**: None
+- **Validation**: State analysis tests
+- **Net Trust Impact**: Increase - If Useful
+
+### Entry 12
+- **Task ID**: P2-T12
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D8.4 Undo + correction system
+- **Trust Level Exercised**: T2
+- **Automation Type**: Correction
+- **Confirmation Points**: Undo Tab
+- **Mutation Summary**: Correction Event
+- **User Response**: Explicit
+- **Rollback Capability**: Redo?
+- **Constraints**: IDS-10 (Append-only history), T2
+- **Deviations**: None
+- **Validation**: Ledger Replay test
+- **Net Trust Impact**: Increase - Safety
+
+### Entry 13
+- **Task ID**: P2-T13
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D8 Smart Depletion Engine
+- **Trust Level Exercised**: T0
+- **Automation Type**: Validation
+- **Confirmation Points**: Test Review
+- **Mutation Summary**: None
+- **User Response**: Pass
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-4 (Deterministic), T0
+- **Deviations**: None
+- **Validation**: Automated math suite
+- **Net Trust Impact**: Neutral
