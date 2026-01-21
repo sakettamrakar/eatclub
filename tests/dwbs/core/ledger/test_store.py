@@ -13,7 +13,7 @@ def test_ledger_append_and_retrieve():
         item=ItemIdentity(name="Apple"),
         quantity=Quantity(value=1.0, unit=Unit.PIECE),
         source=MutationSource.USER_MANUAL,
-        explanation=Explanation(summary="Init", source_rule="test", confidence_score=1.0)
+        explanation=Explanation(reason="Init", source_fact="test", confidence=1.0)
     )
     event = PurchaseEvent(
         event_id=uuid4(),
@@ -39,7 +39,7 @@ def test_ledger_immutability():
         item=ItemIdentity(name="Apple"),
         quantity=Quantity(value=1.0, unit=Unit.PIECE),
         source=MutationSource.USER_MANUAL,
-        explanation=Explanation(summary="Init", source_rule="test", confidence_score=1.0)
+        explanation=Explanation(reason="Init", source_fact="test", confidence=1.0)
     )
     event = PurchaseEvent(
         event_id=uuid4(),

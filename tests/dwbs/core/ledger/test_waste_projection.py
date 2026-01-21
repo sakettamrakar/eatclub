@@ -20,7 +20,7 @@ def test_waste_reduces_inventory():
             item=item_id,
             quantity=Quantity(value=Decimal("1"), unit=Unit.KILOGRAM),
             source=MutationSource.USER_MANUAL,
-            explanation=Explanation(summary="Bought", source_rule="manual", confidence_score=1.0)
+            explanation=Explanation(reason="Bought", source_fact="manual", confidence=1.0)
         )
     )
 
@@ -34,7 +34,7 @@ def test_waste_reduces_inventory():
             quantity=Quantity(value=Decimal("500"), unit=Unit.GRAM),
             reason=WasteReason.SPILLED,
             source=MutationSource.USER_MANUAL,
-            explanation=Explanation(summary="Spilled", source_rule="manual", confidence_score=1.0)
+            explanation=Explanation(reason="Spilled", source_fact="manual", confidence=1.0)
         )
     )
 
