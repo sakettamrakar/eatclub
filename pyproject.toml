@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
@@ -18,4 +19,19 @@ minversion = "6.0"
 addopts = "-ra -q"
 testpaths = [
     "tests",
+=======
+[project]
+name = "dwbs"
+version = "0.1.0"
+description = "Deterministic Work Breakdown System - Core Logic"
+requires-python = ">=3.9"
+dependencies = [
+    "pydantic>=2.0.0",
+    "typing_extensions",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+>>>>>>> main
 ]
