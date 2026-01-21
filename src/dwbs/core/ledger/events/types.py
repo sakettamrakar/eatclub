@@ -1,0 +1,80 @@
+from uuid import UUID, uuid4
+from datetime import datetime, date
+from typing import Optional, Union, Literal
+from pydantic import Field, ConfigDict
+
+from ...contracts import SystemContract, MutationType, MutationSource, Explanation
+from ...identity.resolution import ItemIdentity
+from ...units.converter import Quantity
+from ..waste.reasons import WasteReason
+
+class BasePayload(SystemContract):
+    """Base class for event payloads."""
+    pass
+
+class PurchasePayload(BasePayload):
+    item: ItemIdentity
+    quantity: Quantity
+    expiry_date: Optional[date] = None
+    source: MutationSource
+    explanation: Explanation
+
+class ConsumePayload(BasePayload):
+    item: ItemIdentity
+    quantity: Quantity
+    source: MutationSource
+    explanation: Explanation
+
+class WastePayload(BasePayload):
+    item: ItemIdentity
+    quantity: Quantity
+    reason: WasteReason
+    source: MutationSource
+    explanation: Explanation
+
+class CorrectionPayload(BasePayload):
+    item: ItemIdentity
+    quantity_delta: Quantity # Can be negative? Quantity usually absolute.
+    # If Quantity is absolute, we need to know if we are adding or removing.
+    # But MutationType tells us CORRECTION_ADD vs CORRECTION_REMOVE.
+    # So quantity is absolute.
+    source: MutationSource
+    explanation: Explanation
+
+class LedgerEvent(SystemContract):
+    """
+    D1.1 Event-Sourcing Lite
+    Immutable record of a change to the inventory.
+    """
+    event_id: UUID = Field(default_factory=uuid4, description="Unique event ID")
+    timestamp: datetime = Field(default_factory=datetime.now, description="When the event occurred")
+    actor: str = Field(..., description="The entity performing the action")
+    mutation_type: MutationType = Field(..., description="Type of operation")
+
+class PurchaseEvent(LedgerEvent):
+    mutation_type: Literal[MutationType.PURCHASE] = MutationType.PURCHASE
+    payload: PurchasePayload
+
+class ConsumeEvent(LedgerEvent):
+    mutation_type: Literal[MutationType.CONSUME] = MutationType.CONSUME
+    payload: ConsumePayload
+
+class WasteEvent(LedgerEvent):
+    mutation_type: Literal[MutationType.WASTE] = MutationType.WASTE
+    payload: WastePayload
+
+class CorrectionAddEvent(LedgerEvent):
+    mutation_type: Literal[MutationType.CORRECTION_ADD] = MutationType.CORRECTION_ADD
+    payload: CorrectionPayload
+
+class CorrectionRemoveEvent(LedgerEvent):
+    mutation_type: Literal[MutationType.CORRECTION_REMOVE] = MutationType.CORRECTION_REMOVE
+    payload: CorrectionPayload
+
+InventoryEvent = Union[
+    PurchaseEvent,
+    ConsumeEvent,
+    WasteEvent,
+    CorrectionAddEvent,
+    CorrectionRemoveEvent
+]
