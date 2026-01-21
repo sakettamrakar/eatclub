@@ -1,23 +1,9 @@
-from enum import Enum, auto
-from typing import Optional, List, Dict, Any, Union, Literal
-from abc import ABC, abstractmethod
-from datetime import datetime
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from enum import Enum
+from typing import Optional, List
+from datetime import date
+from pydantic import Field, field_validator, ConfigDict
 
-class SystemContract(BaseModel):
-    """Base class for all system contracts to ensure runtime validation."""
-    model_config = ConfigDict(frozen=True)
-
-class StockStatus(str, Enum):
-    """
-    D0.1 Inventory State Contract
-    Strict definition of stock status.
-    """
-    IN_STOCK = "IN_STOCK"
-    LOW_STOCK = "LOW_STOCK"
-    OUT_OF_STOCK = "OUT_OF_STOCK"
-    EXPIRED = "EXPIRED"
-    UNKNOWN = "UNKNOWN"
+from .base import SystemContract
 
 class Unit(str, Enum):
     """
@@ -38,7 +24,18 @@ class Unit(str, Enum):
     # Imprecise (to be used with caution/heuristics later)
     BUNCH = "BUNCH"
     PINCH = "PINCH"
-    PACKET = "PACKET" # Requires metadata for normalization
+    PACKET = "PACKET"
+
+class StockStatus(str, Enum):
+    """
+    D0.1 Inventory State Contract
+    Strict definition of stock status.
+    """
+    IN_STOCK = "IN_STOCK"
+    LOW_STOCK = "LOW_STOCK"
+    OUT_OF_STOCK = "OUT_OF_STOCK"
+    EXPIRED = "EXPIRED"
+    UNKNOWN = "UNKNOWN"
 
 class Quantity(SystemContract):
     """
@@ -66,7 +63,6 @@ class Quantity(SystemContract):
 
     def __add__(self, other: 'Quantity') -> 'Quantity':
         if self.unit != other.unit:
-             # Simple conversion attempt for common cases
             norm_self = self.normalize()
             norm_other = other.normalize()
             if norm_self.unit == norm_other.unit:
@@ -76,7 +72,6 @@ class Quantity(SystemContract):
 
     def __sub__(self, other: 'Quantity') -> 'Quantity':
         if self.unit != other.unit:
-             # Simple conversion attempt
             norm_self = self.normalize()
             norm_other = other.normalize()
             if norm_self.unit == norm_other.unit:
@@ -85,7 +80,6 @@ class Quantity(SystemContract):
         return Quantity(value=self.value - other.value, unit=self.unit)
 
     def __lt__(self, other: 'Quantity') -> bool:
-         # Normalize for comparison
         norm_self = self.normalize()
         norm_other = other.normalize()
         if norm_self.unit != norm_other.unit:
@@ -107,8 +101,6 @@ class ItemIdentity(SystemContract):
     name: str = Field(..., min_length=1, description="Canonical name of the item (e.g. 'Tomato')")
     variant: Optional[str] = Field(None, description="Form or processing state (e.g. 'Canned', 'Puree', 'Chopped')")
     brand: Optional[str] = Field(None, description="Brand name if relevant")
-
-    # D1.4 Confidence Scores (Default 1.0 for manual entry)
     confidence: float = Field(1.0, ge=0.0, le=1.0, description="Confidence in this identity (Source reliability)")
 
     def full_name(self) -> str:
@@ -119,73 +111,33 @@ class ItemIdentity(SystemContract):
             parts.append(f"[{self.brand}]")
         return " ".join(parts)
 
-class MutationSource(str, Enum):
+class InventoryItem(SystemContract):
     """
-    D0.2 Mutation Rules
-    Defines who/what is authorizing the change.
+    D0.1 Inventory State Contract
+    Represents the current state of an item in the inventory.
     """
-    USER_MANUAL = "USER_MANUAL"  # Explicit user action
-    USER_CONFIRMED_OCR = "USER_CONFIRMED_OCR"  # User approved OCR draft
-    SYSTEM_LOGIC = "SYSTEM_LOGIC"  # Deterministic system logic (e.g. expiry update)
-
-class MutationType(str, Enum):
-    """
-    D0.2 Mutation Rules
-    Defines the type of operation on the ledger.
-    """
-    PURCHASE = "PURCHASE"      # Adding new stock
-    CONSUME = "CONSUME"        # Cooking/Eating
-    WASTE = "WASTE"            # Throwing away
-    CORRECTION_ADD = "CORRECTION_ADD"      # Finding untracked items
-    CORRECTION_REMOVE = "CORRECTION_REMOVE" # Removing items that were tracked erroneously
-    SNAPSHOT = "SNAPSHOT"      # Periodic reconciliation (if needed)
-
-class Explanation(SystemContract):
-    """
-    D0.3 Explainability Contract
-    Every system suggestion or major state change must have a rationale.
-    """
-    reason: str = Field(..., description="Short human-readable summary of the reason.")
-    source_fact: str = Field(..., description="ID of the rule or fact that generated this.")
-    confidence: float = Field(1.0, ge=0.0, le=1.0, description="Confidence in this explanation.")
-    details: Optional[str] = Field(None, description="Detailed explanation.")
-
-class InventoryMutation(SystemContract):
-    """
-    D0.2 Mutation Rules
-    Base class for all inventory mutations.
-    """
-    timestamp: datetime = Field(default_factory=datetime.now)
-    source: MutationSource
-    mutation_type: MutationType
-
-class Bought(InventoryMutation):
-    mutation_type: Literal[MutationType.PURCHASE] = MutationType.PURCHASE
     item: ItemIdentity
     quantity: Quantity
+    expiry_date: Optional[date] = None
+    status: StockStatus = StockStatus.IN_STOCK
 
-class Consumed(InventoryMutation):
-    mutation_type: Literal[MutationType.CONSUME] = MutationType.CONSUME
-    item_id: str
-    quantity: Quantity
+    def is_in_stock(self) -> bool:
+        """
+        D0.1 'In Stock' Predicate:
+        Quantity > 0 AND NOT expired (if expiry known).
+        """
+        if self.quantity.value <= 0:
+            return False
+        if self.expiry_date and self.expiry_date < date.today():
+            return False
+        return True
 
-class Wasted(InventoryMutation):
-    mutation_type: Literal[MutationType.WASTE] = MutationType.WASTE
-    item_id: str
-    quantity: Quantity
-    reason: str
-
-class Corrected(InventoryMutation):
-    mutation_type: Literal[MutationType.CORRECTION_ADD, MutationType.CORRECTION_REMOVE]
-    item_id: Optional[str] = None
-    identity: Optional[ItemIdentity] = None
-    quantity_delta: Quantity
-
-class MutationVerifier(ABC):
+class InventoryState(SystemContract):
     """
-    D0.2 Mutation Rules
+    D0.1 Inventory State Contract
+    Represents the full state of the inventory at a point in time.
     """
-    @abstractmethod
-    def verify(self, mutation: InventoryMutation, current_state: Any) -> bool:
-        """Returns True if valid, raises exception or returns False if invalid."""
-        pass
+    items: List[InventoryItem] = Field(default_factory=list)
+
+    def get_stock_snapshot(self) -> List[InventoryItem]:
+        return [item for item in self.items if item.is_in_stock()]
