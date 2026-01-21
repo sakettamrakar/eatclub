@@ -24,11 +24,12 @@ The physical container actually holds `400g` of rice.
 When the user attempts to log the 21st session ("1 Cup"), the system blocks the action citing "Insufficient Inventory", despite the user clearly seeing rice in the jar.
 
 ## 2. Assumption Violated
-**Assumption:** `A-004-Volumetric-Constancy`
-"Volumetric units (cups, tbsp) map to mass-based units (grams) using a single, immutable global constant for a given ingredient type."
+**Assumptions:**
+*   `A-004a`: Volumetric units can be deterministically mapped to mass units.
+*   `A-004b`: Density is an ingredient-level invariant independent of batch or procurement mode.
 
 **Violation:**
-Bulk density is not an immutable constant for loose commodities; it varies by batch, moisture content, and grain size. The system's "Truth First" architecture prioritized its internal constant over the physical reality of variable density.
+Assumption `A-004b` was violated. Bulk density is not an immutable constant for loose commodities; it varies by batch, moisture content, and grain size. The system's "Truth First" architecture prioritized its internal constant over the physical reality of variable density.
 
 ## 3. FTM Entry (Structured)
 
@@ -38,9 +39,9 @@ Bulk density is not an immutable constant for loose commodities; it varies by ba
 | **User Expectation** | The system allows logging consumption when physical inventory exists. |
 | **System Belief** | Inventory is `0g`. Consumption is impossible. |
 | **Reality Observed** | Inventory is `400g`. Consumption is physically possible. |
-| **Broken Assumption** | `A-004-Volumetric-Constancy`: Density is constant across batches. |
+| **Broken Assumption** | `A-004b`: Density is an ingredient-level invariant independent of batch or procurement mode. |
 | **Design Implication** | Loose commodities cannot rely on global density constants for T3 (Bounded Auto) tracking. |
-| **Linked Invariant** | `IDS-007`: Recipe feasibility must be computable strictly from current inventory state. |
+| **Linked Invariant** | `IDS-007`: Recipe feasibility must be computable strictly from current inventory state. `IDS-014`: No volumetric-to-mass inference is permitted for ingredients with procurement_type = loose unless a batch-scoped density calibration exists. |
 
 ## 4. RADAR BLUE Findings (Condensed)
 
@@ -55,7 +56,7 @@ Bulk density is not an immutable constant for loose commodities; it varies by ba
 | Strategic Finding (RADAR) | Operational Lever (ITSMC) | Action |
 | :--- | :--- | :--- |
 | **R**eality Mismatch | **State** | **Mutation:** `CORRECTION_ADD` +400g to reconcile ledger. |
-| **A**ssumption Broken | **Trust** | **Adjustment:** Downgrade `Volumetric Inference` for `Loose` items from T2 to T0. |
+| **A**ssumption Broken | **Trust** | **Adjustment:** Downgrade `Volumetric Inference` for `Loose` items from T2 to T1 (Execute with Explicit User Input). |
 | **D**ecision Flaw | **Intent** | **Refinement:** System intent shifts from "Infer mass" to "Request mass" for this category. |
 | **A**uthority Check | **Consequence** | **Audit:** Log incident F-001. Flag `Rice (Basmati)` as `Low Confidence`. |
 
@@ -63,13 +64,16 @@ Bulk density is not an immutable constant for loose commodities; it varies by ba
 
 1.  **State Correction:**
     *   Execute `CORRECTION_ADD` transaction: `+400g Rice (Basmati)` with reason code `AUDIT_RECONCILIATION`.
+    *   Metadata: `correction_type: epistemic_reconciliation`, `source_of_truth: physical_audit`.
+    *   *Note:* This correction reconciles truth divergence, not user error or spoilage.
 2.  **Trust Adjustment (MTRI):**
-    *   Change Trust Level for `Rice (Basmati)` volumetric log from **T2 (Execute on Approval)** to **T0 (Read/Analyze)**.
-    *   *Effect:* User can no longer just click "1 Cup". System will now ask "Weight?" or require a one-time density check for the new batch.
+    *   Change Trust Level for `Rice (Basmati)` volumetric log from **T2 (Execute on Approval)** to **T1 (Execute with Explicit User Input)**.
+    *   *Effect:* Volumetric inference is disabled. User-provided mass or batch calibration restores execution authority.
 3.  **Epistemic Update:**
     *   Tag `Ingredient: Rice (Basmati)` with property `variance_risk: high`.
 4.  **IDS Stress Test:**
-    *   Trigger review of `IDS-007`. No change needed, but the incident reinforces the rule that inventory state must be accurate for feasibility to work.
+    *   Trigger review of `IDS-007`. No change needed.
+    *   **Introduce IDS-014:** No volumetric-to-mass inference is permitted for ingredients with procurement_type = loose unless a batch-scoped density calibration exists. (Governance rationale: No retroactive impact).
 
 ## 7. Actions Explicitly NOT Taken
 
@@ -80,7 +84,7 @@ Bulk density is not an immutable constant for loose commodities; it varies by ba
 
 ## 8. Final System State After Simulation
 
-*   **Ledger:** Contains 20 entries of `-200g` and 1 entry of `+400g (Correction)`. Balance: `400g`.
-*   **Trust:** `Rice (Basmati)` requires explicit weight or batch-specific density confirmation for future logs.
+*   **Ledger:** Contains 20 entries of `-200g` and 1 entry of `+400g (Correction)`. Balance: `400g`. Correction tagged as `epistemic_reconciliation` with source `physical_audit`.
+*   **Trust:** `Rice (Basmati)` downgraded to T1 (Execute with Explicit User Input). Volumetric inference disabled.
 *   **User Experience:** Slightly higher friction (must verify weight) but higher truth accuracy.
 *   **Governance:** Incident closed. FTM F-001 recorded.
