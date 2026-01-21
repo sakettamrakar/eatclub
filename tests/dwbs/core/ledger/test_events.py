@@ -8,7 +8,7 @@ from dwbs.core.units.converter import Quantity, Unit
 def test_purchase_event_serialization():
     item = ItemIdentity(name="Tomato", variant="Fresh")
     qty = Quantity(value=1.0, unit=Unit.KILOGRAM)
-    explanation = Explanation(summary="Bought", source_rule="manual", confidence_score=1.0)
+    explanation = Explanation(reason="Bought", source_fact="manual", confidence=1.0)
 
     payload = PurchasePayload(
         item=item,

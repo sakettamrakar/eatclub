@@ -78,3 +78,9 @@
 | 2.6 | 2026-01-21T16:58:25Z | Implemented ExpiryCalculator with lookup table | src/dwbs/core/expiry/calculator.py, tests/dwbs/core/expiry/test_calculator.py | T0, Deterministic lookup | None | Passed table coverage tests |
 | 2.7 | 2026-01-21T17:00:12Z | Implemented WasteEvent payload with Reason | src/dwbs/core/ledger/waste/reasons.py, src/dwbs/core/ledger/events/types.py, tests/dwbs/core/ledger/test_waste_projection.py | T0, Mandatory reason | None | Passed state projection tests |
 | 2.8 | 2026-01-21T17:06:15Z | Validated Ledger Reconstruction | tests/dwbs/core/ledger/test_reconstruction.py, src/dwbs/core/ledger/projection.py | T0, Performance < 100ms | Refactored projection logic to service | Passed replay test with correct arithmetic sum |
+| 3.1 | 2026-01-21T19:04:32Z | Defined IngredientRef and Recipe data classes | src/dwbs/core/recipe/domain/ingredient.py, src/dwbs/core/recipe/domain/recipe.py | T0 Trust Level | None | Schema verified |
+| 3.2 | 2026-01-21T19:05:36Z | Implemented Ingredient Substitution Graph | src/dwbs/core/recipe/graph/substitution.py | T0 Trust Level | None | Topology tests passed |
+| 3.3 | 2026-01-21T19:06:01Z | Implemented YieldCalculator logic | src/dwbs/core/recipe/math/yield_calculator.py | T0 Trust Level | None | Accuracy verified |
+| 3.4 | 2026-01-21T19:07:05Z | Implemented RecipeTag and filtering logic | src/dwbs/core/recipe/tags/tags.py, src/dwbs/core/recipe/tags/filter.py, src/dwbs/core/recipe/domain/recipe.py | T0 Trust Level | None | Filter tests passed |
+| 3.5 | 2026-01-21T19:07:56Z | Implemented Operational Metadata Schema | src/dwbs/core/recipe/domain/recipe.py, src/dwbs/core/recipe/domain/metadata.py | T0 Trust Level | None | Serialization checks passed |
+| 3.6 | 2026-01-21T19:09:27Z | Validated Recipe Feasibility Calculation | tests/dwbs/core/recipe/test_feasibility.py, src/dwbs/core/recipe/domain/feasibility.py | T0 Trust Level | None | Scenario tests passed |

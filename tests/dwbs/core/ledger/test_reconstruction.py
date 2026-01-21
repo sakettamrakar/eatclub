@@ -28,7 +28,7 @@ def test_ledger_reconstruction_performance_and_accuracy():
             item=ItemIdentity(name="TestItem"),
             quantity=Quantity(value=initial_qty, unit=Unit.GRAM),
             source=MutationSource.USER_MANUAL,
-            explanation=Explanation(summary="Init", source_rule="test", confidence_score=1.0)
+            explanation=Explanation(reason="Init", source_fact="test", confidence=1.0)
         )
     )
     store.append(buy)
@@ -52,7 +52,7 @@ def test_ledger_reconstruction_performance_and_accuracy():
                      item=ItemIdentity(name="TestItem"),
                      quantity=qty,
                      source=MutationSource.USER_MANUAL,
-                     explanation=Explanation(summary="buy", source_rule="test", confidence_score=1.0)
+                     explanation=Explanation(reason="buy", source_fact="test", confidence=1.0)
                  )
             )
             expected_sum += qty_val
@@ -65,7 +65,7 @@ def test_ledger_reconstruction_performance_and_accuracy():
                      item=ItemIdentity(name="TestItem"),
                      quantity=qty,
                      source=MutationSource.USER_MANUAL,
-                     explanation=Explanation(summary="eat", source_rule="test", confidence_score=1.0)
+                     explanation=Explanation(reason="eat", source_fact="test", confidence=1.0)
                  )
             )
             expected_sum -= qty_val
@@ -79,7 +79,7 @@ def test_ledger_reconstruction_performance_and_accuracy():
                      quantity=qty,
                      reason=WasteReason.OTHER,
                      source=MutationSource.USER_MANUAL,
-                     explanation=Explanation(summary="bad", source_rule="test", confidence_score=1.0)
+                     explanation=Explanation(reason="bad", source_fact="test", confidence=1.0)
                  )
             )
             expected_sum -= qty_val
