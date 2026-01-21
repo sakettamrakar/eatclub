@@ -1,104 +1,38 @@
-from enum import Enum
-from typing import Optional
-from pydantic import BaseModel, Field, field_validator
-from .contracts import SystemContract
+from typing import Optional, List
+from datetime import datetime, date
+from pydantic import BaseModel, Field
+from .contracts import SystemContract, StockStatus, Quantity, ItemIdentity, Unit
 
-class Unit(str, Enum):
+class InventoryItem(SystemContract):
     """
-    D1.3 Quantity & Unit Normalization
-    Standardized units for inventory.
+    D0.1 Inventory State Contract
+    Represents an item in the inventory.
     """
-    # Weight
-    GRAM = "G"
-    KILOGRAM = "KG"
+    id: str = Field(..., description="Unique identifier for this specific inventory lot.")
+    identity: ItemIdentity = Field(..., description="The type of item.")
+    quantity: Quantity = Field(..., description="The amount remaining.")
+    expiry_date: Optional[date] = Field(None, description="Expiration date.")
+    purchase_date: Optional[datetime] = Field(None, description="When it was added.")
+    status: StockStatus = Field(StockStatus.UNKNOWN, description="Current stock status.")
 
-    # Volume
-    MILLILITER = "ML"
-    LITER = "L"
-
-    # Count
-    PIECE = "PCS"
-
-    # Imprecise (to be used with caution/heuristics later)
-    BUNCH = "BUNCH"
-    PINCH = "PINCH"
-    PACKET = "PACKET" # Requires metadata for normalization
-
-class Quantity(SystemContract):
-    """
-    D1.3 Quantity & Unit Normalization
-    Represents a physical quantity with a unit.
-    """
-    value: float = Field(..., ge=0, description="The numerical amount. Must be non-negative.")
-    unit: Unit = Field(..., description="The unit of measurement.")
-
-    @field_validator('value')
-    def value_must_be_non_negative(cls, v):
-        if v < 0:
-            raise ValueError('Quantity value must be non-negative')
-        return v
-
-    def normalize(self) -> 'Quantity':
+    def is_in_stock(self) -> bool:
         """
-        Returns a normalized version of the quantity (e.g., KG -> G, L -> ML).
+        D0.1: Strictly define what "In Stock" means.
+        Quantity > 0 AND NOT expired (if expiry known).
         """
-        if self.unit == Unit.KILOGRAM:
-            return Quantity(value=self.value * 1000, unit=Unit.GRAM)
-        elif self.unit == Unit.LITER:
-            return Quantity(value=self.value * 1000, unit=Unit.MILLILITER)
-        return self
+        if self.quantity.value <= 0:
+            return False
 
-    def __add__(self, other: 'Quantity') -> 'Quantity':
-        if self.unit != other.unit:
-             # Simple conversion attempt for common cases
-            norm_self = self.normalize()
-            norm_other = other.normalize()
-            if norm_self.unit == norm_other.unit:
-                return Quantity(value=norm_self.value + norm_other.value, unit=norm_self.unit)
-            raise ValueError(f"Cannot add different units: {self.unit} and {other.unit}")
-        return Quantity(value=self.value + other.value, unit=self.unit)
+        if self.status in (StockStatus.EXPIRED, StockStatus.OUT_OF_STOCK):
+            return False
 
-    def __sub__(self, other: 'Quantity') -> 'Quantity':
-        if self.unit != other.unit:
-             # Simple conversion attempt
-            norm_self = self.normalize()
-            norm_other = other.normalize()
-            if norm_self.unit == norm_other.unit:
-                return Quantity(value=norm_self.value - norm_other.value, unit=norm_self.unit)
-            raise ValueError(f"Cannot subtract different units: {self.unit} and {other.unit}")
-        return Quantity(value=self.value - other.value, unit=self.unit)
+        return True
 
-    def __lt__(self, other: 'Quantity') -> bool:
-         # Normalize for comparison
-        norm_self = self.normalize()
-        norm_other = other.normalize()
-        if norm_self.unit != norm_other.unit:
-             raise ValueError(f"Cannot compare different units: {self.unit} and {other.unit}")
-        return norm_self.value < norm_other.value
-
-    def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Quantity):
-            return NotImplemented
-        norm_self = self.normalize()
-        norm_other = other.normalize()
-        return norm_self.value == norm_other.value and norm_self.unit == norm_other.unit
-
-class ItemIdentity(SystemContract):
+class InventoryState(SystemContract):
     """
-    D1.2 Item Identity Resolution
-    Distinguish specific forms of ingredients.
+    D0.1 Inventory State Contract
+    Snapshot of the entire inventory.
     """
-    name: str = Field(..., min_length=1, description="Canonical name of the item (e.g. 'Tomato')")
-    variant: Optional[str] = Field(None, description="Form or processing state (e.g. 'Canned', 'Puree', 'Chopped')")
-    brand: Optional[str] = Field(None, description="Brand name if relevant")
-
-    # D1.4 Confidence Scores (Default 1.0 for manual entry)
-    confidence: float = Field(1.0, ge=0.0, le=1.0, description="Confidence in this identity (Source reliability)")
-
-    def full_name(self) -> str:
-        parts = [self.name]
-        if self.variant:
-            parts.append(f"({self.variant})")
-        if self.brand:
-            parts.append(f"[{self.brand}]")
-        return " ".join(parts)
+    items: List[InventoryItem] = Field(default_factory=list)
+    last_updated: datetime = Field(default_factory=datetime.now)
+    snapshot_id: str = Field(..., description="Unique ID for this state version.")
