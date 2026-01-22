@@ -243,3 +243,198 @@ Trust Upgrades (T1 → T2 → T3) are **earned** solely through the evidence in 
 - **Deviations**: None
 - **Validation**: Automated math suite
 - **Net Trust Impact**: Neutral
+
+### Entry 14
+- **Task ID**: P2-T14
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D9.1 Daily spoken summary
+- **Trust Level Exercised**: T0
+- **Automation Type**: Content Gen
+- **Confirmation Points**: Listening
+- **Mutation Summary**: None
+- **User Response**: Listen/Skip
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-5 (No LLM generation for text), T0
+- **Deviations**: None
+- **Validation**: String matching test
+- **Net Trust Impact**: Neutral
+
+### Entry 15
+- **Task ID**: P2-T15
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D9.2 Expiry alerts
+- **Trust Level Exercised**: T0
+- **Automation Type**: Alert Gen
+- **Confirmation Points**: None
+- **Mutation Summary**: None
+- **User Response**: Ack/Ignore
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-6 (Explanation required), T0
+- **Deviations**: None
+- **Validation**: Logic test
+- **Net Trust Impact**: Increase
+
+### Entry 16
+- **Task ID**: P2-T16
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D9.3 Cooking suggestions
+- **Trust Level Exercised**: T0
+- **Automation Type**: Suggestion Gen
+- **Confirmation Points**: Selection
+- **Mutation Summary**: None
+- **User Response**: Cook/Ignore
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-7 (Feasible), T0
+- **Deviations**: None
+- **Validation**: Comparison test
+- **Net Trust Impact**: Neutral
+
+### Entry 17
+- **Task ID**: P2-T17
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D9.4 Language support (EN + HI)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Translation
+- **Confirmation Points**: None
+- **Mutation Summary**: None
+- **User Response**: N/A
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-4 (Deterministic), T0
+- **Deviations**: None
+- **Validation**: Review
+- **Net Trust Impact**: Neutral
+
+### Entry 18
+- **Task ID**: P2-T18
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D9 Voice Prompts
+- **Trust Level Exercised**: T0
+- **Automation Type**: Safety Check
+- **Confirmation Points**: Test Review
+- **Mutation Summary**: None
+- **User Response**: Pass
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-6 (Least Privilege), T0
+- **Deviations**: None
+- **Validation**: State integrity test
+- **Net Trust Impact**: Neutral
+
+### Entry 19
+- **Task ID**: P2-T19
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10.1 Roles (viewer/editor)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Auth Logic
+- **Confirmation Points**: None
+- **Mutation Summary**: None
+- **User Response**: N/A
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-12 (Access Control), T0
+- **Deviations**: None
+- **Validation**: Permission tests
+- **Net Trust Impact**: Neutral
+
+### Entry 20
+- **Task ID**: P2-T20
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10.2 Conflict Resolution
+- **Trust Level Exercised**: T2
+- **Automation Type**: Conflict Resolution
+- **Confirmation Points**: Resolution Selection
+- **Mutation Summary**: Ledger Reorg
+- **User Response**: Explicit Choice
+- **Rollback Capability**: Yes
+- **Constraints**: IDS-1 (Truth integrity), T2
+- **Deviations**: None
+- **Validation**: Conflict scenario test
+- **Net Trust Impact**: Increase - Integrity
+
+### Entry 21
+- **Task ID**: P2-T21
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10.3 Activity timeline
+- **Trust Level Exercised**: T0
+- **Automation Type**: Logging
+- **Confirmation Points**: None
+- **Mutation Summary**: None
+- **User Response**: N/A
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-10 (Auditable), T0
+- **Deviations**: None
+- **Validation**: UI check (via Unit Test)
+- **Net Trust Impact**: Increase - Transparencey
+
+### Entry 22
+- **Task ID**: P2-T22
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10.4 Notification rules
+- **Trust Level Exercised**: T1
+- **Automation Type**: Notification
+- **Confirmation Points**: Alert Ack
+- **Mutation Summary**: None
+- **User Response**: Clear/Interact
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-1 (Awareness), T1
+- **Deviations**: None
+- **Validation**: Event listener test
+- **Net Trust Impact**: Increase - Awareness
+
+### Entry 23
+- **Task ID**: P2-T23
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10 Family Sharing
+- **Trust Level Exercised**: T0
+- **Automation Type**: Validation
+- **Confirmation Points**: Review
+- **Mutation Summary**: None
+- **User Response**: Pass
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-4 (Deterministic), T0
+- **Deviations**: None
+- **Validation**: Simulation suite
+- **Net Trust Impact**: Neutral
+
+### Entry 24
+- **Task ID**: P2-T24
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D7 Email & PDF Ingestion (Hardening)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Audit Log
+- **Confirmation Points**: None
+- **Mutation Summary**: Access Logs
+- **User Response**: N/A
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-1 (Auditability), T0
+- **Deviations**: None
+- **Validation**: Log inspection (Manual code review)
+- **Net Trust Impact**: Increase - Auditability
+
+### Entry 25
+- **Task ID**: P2-T25
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D10 Family Sharing (Hardening)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Security Check
+- **Confirmation Points**: Review
+- **Mutation Summary**: None
+- **User Response**: Pass
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-6 (Least Privilege), T0
+- **Deviations**: None
+- **Validation**: Security unit tests
+- **Net Trust Impact**: Increase - Hardening
+
+### Entry 26
+- **Task ID**: P2-T26
+- **Date**: 2026-01-21
+- **DWBS Deliverable**: D8 Smart Depletion Engine (Hardening)
+- **Trust Level Exercised**: T0
+- **Automation Type**: Reliability Check
+- **Confirmation Points**: Review
+- **Mutation Summary**: None
+- **User Response**: Pass
+- **Rollback Capability**: N/A
+- **Constraints**: IDS-1 (Integrity), T0
+- **Deviations**: None
+- **Validation**: Fuzz test
+- **Net Trust Impact**: Increase - Hardening
